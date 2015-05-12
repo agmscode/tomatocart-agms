@@ -65,7 +65,7 @@
  * Constructor
  */
 
-  function osC_Payment_agms_cc_aim() {
+  function osC_Payment_agms_cc() {
     global $osC_Language;
 
     $this->_title = $osC_Language->get('payment_agms_cc_title');
