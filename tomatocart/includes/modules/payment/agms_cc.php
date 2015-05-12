@@ -62,19 +62,19 @@
       $osC_CreditCard = new osC_CreditCard();
 
       $js = '  if (payment_value == "' . $this->_code . '") {' . "\n" .
-            '    var authorizenet_cc_owner = document.checkout_payment.authorizenet_cc_owner.value;' . "\n" .
-            '    var authorizenet_cc_number = document.checkout_payment.authorizenet_cc_number.value;' . "\n" .
-            '    authorizenet_cc_number = authorizenet_cc_number.replace(/[^\d]/gi, "");' . "\n";
+            '    var agms_cc_owner = document.checkout_payment.agms_cc_owner.value;' . "\n" .
+            '    var agms_cc_number = document.checkout_payment.agms_cc_number.value;' . "\n" .
+            '    agms_cc_number = agms_cc_number.replace(/[^\d]/gi, "");' . "\n";
 
       if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $js .= '    var authorizenet_cc_cvc = document.checkout_payment.authorizenet_cc_cvc.value;' . "\n";
+        $js .= '    var agms_cc_cvc = document.checkout_payment.agms_cc_cvc.value;' . "\n";
       }
 
       if (CFG_CREDIT_CARDS_VERIFY_WITH_JS == '1') {
-        $js .= '    var authorizenet_cc_type_match = false;' . "\n";
+        $js .= '    var agms_cc_type_match = false;' . "\n";
       }
 
-      $js .= '    if (authorizenet_cc_owner == "" || authorizenet_cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
+      $js .= '    if (agms_cc_owner == "" || agms_cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
              '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_js_credit_card_owner'), CC_OWNER_MIN_LENGTH) . '\n";' . "\n" .
              '      error = 1;' . "\n" .
              '    }' . "\n";
@@ -86,27 +86,27 @@
           if ($osC_CreditCard->typeExists($type_id)) {
             $has_type_patterns = true;
 
-            $js .= '    if ( (authorizenet_cc_type_match == false) && (authorizenet_cc_number.match(' . $osC_CreditCard->getTypePattern($type_id) . ') != null) ) { ' . "\n" .
-                   '      authorizenet_cc_type_match = true;' . "\n" .
+            $js .= '    if ( (agms_cc_type_match == false) && (agms_cc_number.match(' . $osC_CreditCard->getTypePattern($type_id) . ') != null) ) { ' . "\n" .
+                   '      agms_cc_type_match = true;' . "\n" .
                    '    }' . "\n";
           }
         }
       }
 
       if ($has_type_patterns === true) {
-        $js .= '    if ((authorizenet_cc_type_match == false) || (mod10(authorizenet_cc_number) == false)) {' . "\n" .
+        $js .= '    if ((agms_cc_type_match == false) || (mod10(agms_cc_number) == false)) {' . "\n" .
                '      error_message = error_message + "' . $osC_Language->get('payment_agms_cc_js_credit_card_not_accepted') . '\n";' . "\n" .
                '      error = 1;' . "\n" .
                '    }' . "\n";
       } else {
-        $js .= '    if (authorizenet_cc_number == "" || authorizenet_cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
+        $js .= '    if (agms_cc_number == "" || agms_cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
                '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_js_credit_card_number'), CC_NUMBER_MIN_LENGTH) . '\n";' . "\n" .
                '      error = 1;' . "\n" .
                '    }' . "\n";
       }
 
       if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $js .= '    if (authorizenet_cc_cvc == "" || authorizenet_cc_cvc.length < 3) {' . "\n" .
+        $js .= '    if (agms_cc_cvc == "" || agms_cc_cvc.length < 3) {' . "\n" .
                '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_js_credit_card_cvc'), 3) . '\n";' . "\n" .
                '      error = 1;' . "\n" .
                '    }' . "\n";
@@ -132,15 +132,15 @@
       $selection = array('id' => $this->_code,
                          'module' => $this->_method_title,
                          'fields' => array(array('title' => $osC_Language->get('payment_agms_cc_credit_card_owner'),
-                                                 'field' => osc_draw_input_field('authorizenet_cc_owner', $osC_ShoppingCart->getBillingAddress('firstname') . ' ' . $osC_ShoppingCart->getBillingAddress('lastname'), 'style="margin:5px 0;"')),
+                                                 'field' => osc_draw_input_field('agms_cc_owner', $osC_ShoppingCart->getBillingAddress('firstname') . ' ' . $osC_ShoppingCart->getBillingAddress('lastname'), 'style="margin:5px 0;"')),
                                            array('title' => $osC_Language->get('payment_agms_cc_credit_card_number'),
-                                                 'field' => osc_draw_input_field('authorizenet_cc_number'), '', 'style="margin:5px 0;"'),
+                                                 'field' => osc_draw_input_field('agms_cc_number'), '', 'style="margin:5px 0;"'),
                                            array('title' => $osC_Language->get('payment_agms_cc_credit_card_expires'),
-                                                 'field' => osc_draw_pull_down_menu('authorizenet_cc_expires_month', $expires_month, null, 'style="margin:5px 0;"') . '&nbsp;' . osc_draw_pull_down_menu('authorizenet_cc_expires_year', $expires_year, null, 'style="margin:5px 0;"'))));
+                                                 'field' => osc_draw_pull_down_menu('agms_cc_expires_month', $expires_month, null, 'style="margin:5px 0;"') . '&nbsp;' . osc_draw_pull_down_menu('agms_cc_expires_year', $expires_year, null, 'style="margin:5px 0;"'))));
 
      if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
        $selection['fields'][] = array('title' => $osC_Language->get('payment_agms_cc_credit_card_cvc'),
-                                      'field' => osc_draw_input_field('authorizenet_cc_cvc', null, 'size="5" maxlength="4" style="margin:5px 0;"'));
+                                      'field' => osc_draw_input_field('agms_cc_cvc', null, 'size="5" maxlength="4" style="margin:5px 0;"'));
      }
 
       return $selection;
@@ -173,13 +173,13 @@
     function process_button() {
       global $osC_CreditCard;
 
-      $fields = osc_draw_hidden_field('authorizenet_cc_owner', $osC_CreditCard->getOwner()) .
-                osc_draw_hidden_field('authorizenet_cc_expires_month', $osC_CreditCard->getExpiryMonth()) .
-                osc_draw_hidden_field('authorizenet_cc_expires_year', $osC_CreditCard->getExpiryYear()) .
-                osc_draw_hidden_field('authorizenet_cc_number', $osC_CreditCard->getNumber());
+      $fields = osc_draw_hidden_field('agms_cc_owner', $osC_CreditCard->getOwner()) .
+                osc_draw_hidden_field('agms_cc_expires_month', $osC_CreditCard->getExpiryMonth()) .
+                osc_draw_hidden_field('agms_cc_expires_year', $osC_CreditCard->getExpiryYear()) .
+                osc_draw_hidden_field('agms_cc_number', $osC_CreditCard->getNumber());
 
       if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $fields .= osc_draw_hidden_field('authorizenet_cc_cvc', $osC_CreditCard->getCVC());
+        $fields .= osc_draw_hidden_field('agms_cc_cvc', $osC_CreditCard->getCVC());
       }
 
       return $fields;
@@ -308,11 +308,11 @@
     function _verifyData() {
       global $osC_Language, $messageStack, $osC_CreditCard;
 
-      $osC_CreditCard = new osC_CreditCard($_POST['authorizenet_cc_number'], $_POST['authorizenet_cc_expires_month'], $_POST['authorizenet_cc_expires_year']);
-      $osC_CreditCard->setOwner($_POST['authorizenet_cc_owner']);
+      $osC_CreditCard = new osC_CreditCard($_POST['agms_cc_number'], $_POST['agms_cc_expires_month'], $_POST['agms_cc_expires_year']);
+      $osC_CreditCard->setOwner($_POST['agms_cc_owner']);
 
       if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $osC_CreditCard->setCVC($_POST['authorizenet_cc_cvc']);
+        $osC_CreditCard->setCVC($_POST['agms_cc_cvc']);
       }
 
       if (($result = $osC_CreditCard->isValid(MODULE_PAYMENT_AGMS_CC_ACCEPTED_TYPES)) !== true) {
