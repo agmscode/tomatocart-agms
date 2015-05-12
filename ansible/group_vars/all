@@ -1,0 +1,8 @@
+---
+server_hostname: localhost
+tomatocart_version: 4.1.*
+tomatocart_folder: tomatocart
+php_fpm_socket: /var/run/php-fpm.sock
+database_name: tomatocart
+database_user: tomatocart
+database_password: mytomatocartdatabasepassword

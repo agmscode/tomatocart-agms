@@ -1,0 +1,13 @@
+---
+- name: Tomatocart with LNPP-Vagrant-Ansible
+  hosts: all
+  sudo: yes
+
+  roles:
+    - common
+    - php-fpm
+    - composer
+    - mysql
+    - nginx
+    - tomatocart
+    - reload
