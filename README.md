@@ -1,13 +1,12 @@
-# Ubercart Agms Gateway Plugin 
+# Tomatocart Agms Gateway Plugin 
 
-The Ubercart AGMS plugin provides Avant-Garde Gateway Payment in Ubercart.
+The Tomatocart AGMS plugin provides Avant-Garde Gateway Payment in Tomatocart.
 
 ## Installation
 
-Download the uc_agms.zip and unzip it.
-Copy the uc_agms folder inside sites/default/modules
-folder of your ubercart install.
-Enable uc_agms in ubercart administrator panel.
+Download the toc_agms.zip and unzip it.
+Copy the files to respective location inside tomatocart public_html.
+Enable toc_agms in tomatocart administrator panel.
 
 ## Usage
 In Payment Settings you will see an option for Agms Gateway
@@ -21,7 +20,7 @@ Support for Transaction Processing only.
 ## Documentation
 
 * [Official documentation](https://www.onlinepaymentprocessing.com/docs)
-* [Bug Tracker](http://github.com/agmscode/uc_agms/issues)
+* [Bug Tracker](http://github.com/agmscode/tomatocart-agms/issues)
 
 
 ## License
@@ -34,7 +33,7 @@ The git repository is configured as Vagrant VM. Fireup with `vagrant up`
 
 ## Contributing
 
-1. Fork it ( https://github.com/agmscode/uc_agms/fork )
+1. Fork it ( https://github.com/agmscode/tomatocart_agms/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
