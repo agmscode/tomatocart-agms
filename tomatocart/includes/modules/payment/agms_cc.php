@@ -251,15 +251,20 @@
 
       $response = $this->sendTransactionToGateway($gateway_url, $post_string, $headers);
 
+      $error = false;
+
       if (!empty($response)) {
           $transaction_response = $this->_parseResponse($response, "ProcessTransaction");
       } else {
-        $regs = array('-1', '-1', '-1');
+        $error = "Unable to Process Transaction";
       }
 
-      $error = false;
-
-
+      if($transaction_response['STATUS_CODE'] == 1){
+        $error = false;
+      }
+      else {
+        $error = $transaction_response['STATUS_MSG'];
+      }
 
       if ($error != false) {
         osC_Order::remove($orders_id);
