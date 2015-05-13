@@ -3,7 +3,7 @@
   <definitions>
     <definition>
       <key>payment_agms_cc_hpp_title</key>
-      <value><![CDATA[AGMS Payment Gateway HPP]]></value>
+      <value><![CDATA[AGMS Hosted Page Payment Gateway]]></value>
       <group>modules-payment</group>
     </definition>
     <definition>

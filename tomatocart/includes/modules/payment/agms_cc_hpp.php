@@ -61,58 +61,7 @@
 
       $osC_CreditCard = new osC_CreditCard();
 
-      $js = '  if (payment_value == "' . $this->_code . '") {' . "\n" .
-            '    var agms_cc_hpp_owner = document.checkout_payment.agms_cc_hpp_owner.value;' . "\n" .
-            '    var agms_cc_hpp_number = document.checkout_payment.agms_cc_hpp_number.value;' . "\n" .
-            '    agms_cc_number = agms_cc_number.replace(/[^\d]/gi, "");' . "\n";
-
-      if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $js .= '    var agms_cc_cvc = document.checkout_payment.agms_cc_cvc.value;' . "\n";
-      }
-
-      if (CFG_CREDIT_CARDS_VERIFY_WITH_JS == '1') {
-        $js .= '    var agms_cc_type_match = false;' . "\n";
-      }
-
-      $js .= '    if (agms_cc_owner == "" || agms_cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
-             '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_hpp_js_credit_card_owner'), CC_OWNER_MIN_LENGTH) . '\n";' . "\n" .
-             '      error = 1;' . "\n" .
-             '    }' . "\n";
-
-      $has_type_patterns = false;
-
-      if ( (CFG_CREDIT_CARDS_VERIFY_WITH_JS == '1') && (osc_empty(MODULE_PAYMENT_AGMS_CC_ACCEPTED_TYPES) === false) ) {
-        foreach (explode(',', MODULE_PAYMENT_AGMS_CC_ACCEPTED_TYPES) as $type_id) {
-          if ($osC_CreditCard->typeExists($type_id)) {
-            $has_type_patterns = true;
-
-            $js .= '    if ( (agms_cc_type_match == false) && (agms_cc_number.match(' . $osC_CreditCard->getTypePattern($type_id) . ') != null) ) { ' . "\n" .
-                   '      agms_cc_type_match = true;' . "\n" .
-                   '    }' . "\n";
-          }
-        }
-      }
-
-      if ($has_type_patterns === true) {
-        $js .= '    if ((agms_cc_type_match == false) || (mod10(agms_cc_number) == false)) {' . "\n" .
-               '      error_message = error_message + "' . $osC_Language->get('payment_agms_cc_hpp_js_credit_card_not_accepted') . '\n";' . "\n" .
-               '      error = 1;' . "\n" .
-               '    }' . "\n";
-      } else {
-        $js .= '    if (agms_cc_number == "" || agms_cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
-               '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_hpp_js_credit_card_number'), CC_NUMBER_MIN_LENGTH) . '\n";' . "\n" .
-               '      error = 1;' . "\n" .
-               '    }' . "\n";
-      }
-
-      if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $js .= '    if (agms_cc_cvc == "" || agms_cc_cvc.length < 3) {' . "\n" .
-               '      error_message = error_message + "' . sprintf($osC_Language->get('payment_agms_cc_hpp_js_credit_card_cvc'), 3) . '\n";' . "\n" .
-               '      error = 1;' . "\n" .
-               '    }' . "\n";
-      }
-
-      $js .= '  }' . "\n";
+      $js = '' . "\n";
 
       return $js;
     }
@@ -129,19 +78,11 @@
         $expires_year[] = array('id' => $i, 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
       }
 
-      $selection = array('id' => $this->_code,
-                         'module' => $this->_method_title,
-                         'fields' => array(array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_owner'),
-                                                 'field' => osc_draw_input_field('agms_cc_hpp_owner', $osC_ShoppingCart->getBillingAddress('firstname') . ' ' . $osC_ShoppingCart->getBillingAddress('lastname'), 'style="margin:5px 0;"')),
-                                           array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_number'),
-                                                 'field' => osc_draw_input_field('agms_cc_hpp_number'), '', 'style="margin:5px 0;"'),
-                                           array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_expires'),
-                                                 'field' => osc_draw_pull_down_menu('agms_cc_hpp_expires_month', $expires_month, null, 'style="margin:5px 0;"') . '&nbsp;' . osc_draw_pull_down_menu('agms_cc_expires_year', $expires_year, null, 'style="margin:5px 0;"'))));
-
-     if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-       $selection['fields'][] = array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_cvc'),
-                                      'field' => osc_draw_input_field('agms_cc_hpp_cvc', null, 'size="5" maxlength="4" style="margin:5px 0;"'));
-     }
+      $selection = array(
+        'id' => $this->_code,
+        'module' => $this->_method_title,
+        'fields' => array()
+        );
 
       return $selection;
     }
@@ -154,18 +95,10 @@
     function confirmation() {
       global $osC_Language, $osC_CreditCard;
 
-      $confirmation = array('title' => $this->_method_title,
-                            'fields' => array(array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_owner'),
-                                                    'field' => $osC_CreditCard->getOwner()),
-                                              array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_number'),
-                                                    'field' => $osC_CreditCard->getSafeNumber()),
-                                              array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_expires'),
-                                                    'field' => $osC_CreditCard->getExpiryMonth() . ' / ' . $osC_CreditCard->getExpiryYear())));
-
-      if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $confirmation['fields'][] = array('title' => $osC_Language->get('payment_agms_cc_hpp_credit_card_cvc'),
-                                          'field' => $osC_CreditCard->getCVC());
-      }
+      $confirmation = array(
+        'title' => $this->_method_title,
+        'fields' => array()
+      );
 
       return $confirmation;
     }
@@ -173,14 +106,7 @@
     function process_button() {
       global $osC_CreditCard;
 
-      $fields = osc_draw_hidden_field('agms_cc_hpp_owner', $osC_CreditCard->getOwner()) .
-                osc_draw_hidden_field('agms_cc_hpp_expires_month', $osC_CreditCard->getExpiryMonth()) .
-                osc_draw_hidden_field('agms_cc_hpp_expires_year', $osC_CreditCard->getExpiryYear()) .
-                osc_draw_hidden_field('agms_cc_hpp_number', $osC_CreditCard->getNumber());
-
-      if (MODULE_PAYMENT_AGMS_CC_VERIFY_WITH_CVC == '1') {
-        $fields .= osc_draw_hidden_field('agms_cc_hpp_cvc', $osC_CreditCard->getCVC());
-      }
+      $fields = '';
 
       return $fields;
     }
@@ -192,26 +118,26 @@
 
       $orders_id = osC_Order::insert();
 
-      $params = array('GatewayUserName' => substr(MODULE_PAYMENT_AGMS_CC_USERNAME, 0, 20),
-                      'GatewayPassword' => substr(MODULE_PAYMENT_AGMS_CC_PASSWORD, 0, 16),
-                      'TransactionType' => 'sale',
-                      'PaymentType' => 'creditcard',
-                      'FirstName' => substr($osC_ShoppingCart->getBillingAddress('firstname'), 0, 50),
-                      'LastName' => substr($osC_ShoppingCart->getBillingAddress('lastname'), 0, 50),
-                      'Company' => substr($osC_ShoppingCart->getBillingAddress('company'), 0, 50),
-                      'Address' => substr($osC_ShoppingCart->getBillingAddress('street_address'), 0, 60),
-                      'City' => substr($osC_ShoppingCart->getBillingAddress('city'), 0, 40),
-                      'State' => substr($osC_ShoppingCart->getBillingAddress('state'), 0, 40),
-                      'Zip' => substr($osC_ShoppingCart->getBillingAddress('postcode'), 0, 20),
-                      'Country' => substr($osC_ShoppingCart->getBillingAddress('country_iso_code_2'), 0, 60),
-                      'PONumber' => substr($osC_Customer->getID(), 0, 20),
-                      'IPAddress' => osc_get_ip_address(),
-                      'OrderId' => $order_id,
-                      'Email' => substr($osC_Customer->getEmailAddress(), 0, 255),
-                      'OrderDescription' => substr(STORE_NAME, 0, 255),
-                      'Amount' => substr($osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()), 0, 15),
-                      'CCNumber' => $osC_CreditCard->getNumber(),
-                      'CCExpDate' => $osC_CreditCard->getExpiryMonth() . $osC_CreditCard->getExpiryYear());
+      $params = array(
+        'GatewayUserName' => substr(MODULE_PAYMENT_AGMS_CC_USERNAME, 0, 20),
+        'GatewayPassword' => substr(MODULE_PAYMENT_AGMS_CC_PASSWORD, 0, 16),
+        'TransactionType' => 'sale',
+        'PaymentType' => 'creditcard',
+        'FirstName' => substr($osC_ShoppingCart->getBillingAddress('firstname'), 0, 50),
+        'LastName' => substr($osC_ShoppingCart->getBillingAddress('lastname'), 0, 50),
+        'Company' => substr($osC_ShoppingCart->getBillingAddress('company'), 0, 50),
+        'Address' => substr($osC_ShoppingCart->getBillingAddress('street_address'), 0, 60),
+        'City' => substr($osC_ShoppingCart->getBillingAddress('city'), 0, 40),
+        'State' => substr($osC_ShoppingCart->getBillingAddress('state'), 0, 40),
+        'Zip' => substr($osC_ShoppingCart->getBillingAddress('postcode'), 0, 20),
+        'Country' => substr($osC_ShoppingCart->getBillingAddress('country_iso_code_2'), 0, 60),
+        'PONumber' => substr($osC_Customer->getID(), 0, 20),
+        'IPAddress' => osc_get_ip_address(),
+        'OrderId' => $order_id,
+        'Email' => substr($osC_Customer->getEmailAddress(), 0, 255),
+        'OrderDescription' => substr(STORE_NAME, 0, 255),
+        'Amount' => substr($osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()), 0, 15)        
+      );
 
       if (ACCOUNT_TELEPHONE > -1) {
         $params['Phone'] = $osC_ShoppingCart->getBillingAddress('telephone_number');
@@ -245,7 +171,7 @@
 
       switch (MODULE_PAYMENT_AGMS_CC_TRANSACTION_SERVER) {
         default:
-          $gateway_url = 'https://gateway.agms.com/roxapi/agms.asmx';
+          $gateway_url = 'https://gateway.agms.com/roxapi/AGMS_HostedPayment.asmx';
           break;
       }
 
