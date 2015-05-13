@@ -4,8 +4,8 @@ The Tomatocart AGMS plugin provides Avant-Garde Gateway Payment in Tomatocart.
 
 ## Installation
 
-Download the toc_agms.zip and unzip it.
-Copy the files to respective location inside tomatocart public_html.
+Download the repository and unzip it.
+Copy the files inside tomatocart folder to respective location inside tomatocart public_html.
 Enable toc_agms in tomatocart administrator panel.
 
 ## Usage
