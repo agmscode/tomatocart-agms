@@ -211,8 +211,8 @@
                       'OrderDescription' => substr(STORE_NAME, 0, 255),
                       'Amount' => substr($osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()), 0, 15),
                       'CCNumber' => $osC_CreditCard->getNumber(),
-                      'CCExpDate' => $osC_CreditCard->getExpiryMonth() . $osC_CreditCard->getExpiryYear());
-
+                      'CCExpDate' => $osC_CreditCard->getExpiryMonth() . substr((string)$osC_CreditCard->getExpiryYear(), -2));
+      
       if (ACCOUNT_TELEPHONE > -1) {
         $params['Phone'] = $osC_ShoppingCart->getBillingAddress('telephone_number');
       }
